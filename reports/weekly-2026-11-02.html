@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InferMatrix深圳开发组 · 贡献周报 · 2026-11-02</title>
+<style>
+  :root {
+    --ink: #1a2233; --ink-soft: #5a6478; --line: #e5e9f2; --bg: #f4f6fb; --card: #ffffff;
+    --accent: #4f46e5; --accent-soft: #eef0fe;
+    --green: #0a8a4a; --green-bg: #e5f6ec; --red: #c23b3b; --red-bg: #fdecec;
+    --amber: #9a6700; --amber-bg: #fff3d6; --blue: #175fb0; --blue-bg: #e6f0fb;
+    --violet: #6d28d9; --violet-bg: #f1e9fe; --gray-bg: #eef1f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.65; padding: 40px 20px 60px; }
+  .page { max-width: 1060px; margin: 0 auto; }
+  header.hero { background: linear-gradient(135deg, #3730a3 0%, #4f46e5 55%, #6d28d9 100%); color: #fff;
+    border-radius: 16px; padding: 34px 38px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(79, 70, 229, .25); }
+  header.hero h1 { font-size: 26px; font-weight: 700; letter-spacing: .5px; }
+  header.hero .sub { margin-top: 8px; font-size: 14px; opacity: .92; }
+  header.hero .meta { margin-top: 14px; font-size: 12.5px; opacity: .75; }
+  header.hero .meta span { margin-right: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  .stat { background: var(--card); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(26, 34, 51, .05); }
+  .stat .num { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1.2; }
+  .stat .lbl { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+  .stat .num small { font-size: 15px; font-weight: 600; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 26px 30px;
+    margin-bottom: 22px; box-shadow: 0 2px 10px rgba(26,34,51,.04); }
+  h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  h2 .tag { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 12px; }
+  .h3 { font-size: 15px; font-weight: 700; margin: 20px 0 10px; }
+  .h3:first-of-type { margin-top: 0; }
+  .sec-desc { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 12.5px; color: var(--ink-soft); font-weight: 600; text-transform: uppercase;
+    letter-spacing: .4px; padding: 10px 12px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfe; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .pr-title { font-weight: 600; }
+  .pr-id { color: var(--ink-soft); font-weight: 500; margin-right: 6px; }
+  .member { font-weight: 600; white-space: nowrap; }
+  .codeadd { color: var(--green); font-weight: 700; font-family: Consolas, "Courier New", monospace; }
+  .codedel { color: var(--red); font-weight: 700; font-family: Consolas, "Courier New", monospace; }
+  .muted { color: var(--ink-soft); font-size: 12.5px; }
+  .badge { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 2px 10px;
+    letter-spacing: .3px; white-space: nowrap; }
+  .b-open { color: var(--green); background: var(--green-bg); }
+  .b-draft { color: var(--amber); background: var(--amber-bg); }
+  .b-merged { color: var(--violet); background: var(--violet-bg); }
+  .b-closed { color: var(--ink-soft); background: var(--gray-bg); }
+  .b-perf { color: var(--blue); background: var(--blue-bg); }
+  .b-idle { color: var(--ink-soft); background: var(--gray-bg); }
+  .b-active { color: var(--accent); background: var(--accent-soft); }
+  .cmt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .cmt-card { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .cmt-card .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .cmt-card .who { font-weight: 700; }
+  .cmt-card .count { font-size: 20px; font-weight: 800; color: var(--accent); }
+  .cmt-card ul { margin-left: 18px; font-size: 13.5px; }
+  .cmt-card li { margin-bottom: 6px; }
+  .k { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 0 6px; margin-right: 6px; vertical-align: 1px; }
+  .k1 { color: var(--blue); background: var(--blue-bg); }
+  .k2 { color: var(--accent); background: var(--accent-soft); }
+  .k3 { color: var(--amber); background: var(--amber-bg); }
+  .rules { background: var(--accent-soft); border-radius: 8px; padding: 8px 14px; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 14px; }
+  .rules b { color: var(--accent); }
+  .score { font-weight: 800; color: var(--accent); font-size: 17px; }
+  .pr-pre { color: var(--amber); }
+  .pr-pre sup { font-weight: 700; }
+  .idle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .idle-card { border: 1px dashed #cdd4e2; border-radius: 10px; padding: 16px 18px; }
+  .idle-card .who { font-weight: 700; margin-bottom: 6px; }
+  .idle-card p { font-size: 13px; color: var(--ink-soft); }
+  .method { font-size: 13px; color: var(--ink-soft); }
+  .method li { margin-bottom: 6px; margin-left: 18px; }
+  footer { text-align: center; font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+  @media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); } .cmt-grid, .idle-grid { grid-template-columns: 1fr; } section { padding: 20px 18px; } .table-wrap { overflow-x: auto; } }
+  @media print { body { background: #fff; padding: 0; } section, .stat, header.hero { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <h1>InferMatrix深圳开发组贡献周报</h1>
+    <div class="sub">仓库：vllm-project/vllm-omni ｜ 统计窗口：北京时间 2026-10-26 08:01 – 2026-11-02 08:01（滚动 168 小时）</div>
+    <div class="meta">
+      <span>扫描时间：2026-11-02 08:01（北京时间）</span>
+      <span>成员：9 人（ShengDev、BLANKETusers、psv666、zengchuang-hw、amy-why-3459、Bounty-hunter、y-null、Dong1017、wangqiankun13）</span>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="num">38</div><div class="lbl">提交 PR</div></div>
+    <div class="stat"><div class="num">5</div><div class="lbl">提交 Issue</div></div>
+    <div class="stat"><div class="num">494</div><div class="lbl">评论总数</div></div>
+    <div class="stat"><div class="num">+13238 <small>/ −1985</small></div><div class="lbl">新增 / 删除代码行</div></div>
+    <div class="stat"><div class="num">9 <small>/ 9</small></div><div class="lbl">窗口内活跃成员</div></div>
+  </div>
+
+  <section>
+    <h2>成员总览</h2>
+    <div class="rules"><b>评分规格</b>：合入 PR（≥500 行）5 分/个 ｜ 合入 PR（&lt;500 行）3 分/个 ｜ 新增 PR 2 分/个 ｜ Issue 1 分/个 ｜ Comment 1 分/条（行数 = 新增 + 删除合计）</div>
+    <div class="sec-desc">按窗口内活动量汇总（PR / Issue / 评论）；「代码量」为该成员窗口内所有 PR 的新增 / 删除行数合计；成员按得分从高到低排序。「PR 编号」列含"新增"与"合入"两组，<span class="pr-pre">#N<sup>↑</sup></span> 表示窗口开启前创建、本周内合入。</div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>成员</th><th>得分</th><th>PR</th><th>PR 编号</th><th>代码量</th><th>Issue</th><th>Issue 编号</th><th>评论</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td class="member">amy-why-3459</td><td><span class="score">333</span><br><span class="muted">合入≥500行 ×2 · 合入<500行 ×9 · 新增PR ×15 · Issue ×1 · 评论 ×265</span></td><td>15</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9698" target="_blank">#9698</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9635" target="_blank">#9635</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9617" target="_blank">#9617</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9589" target="_blank">#9589</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9584" target="_blank">#9584</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9583" target="_blank">#9583</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9578" target="_blank">#9578</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank">#9560</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">#9526</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">#9486</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">#9463</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9444" target="_blank">#9444</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9406" target="_blank">#9406</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9388" target="_blank">#9388</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank">#9386</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9635" target="_blank" class="">#9635</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank" class="">#9560</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank" class="">#9526</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank" class="">#9486</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank" class="">#9463</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9444" target="_blank" class="">#9444</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9406" target="_blank" class="">#9406</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9388" target="_blank" class="">#9388</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank" class="">#9386</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9308" target="_blank" class="pr-pre">#9308<sup>↑</sup></a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9181" target="_blank" class="pr-pre">#9181<sup>↑</sup></a></td><td><span class="codeadd">+6576</span> <span class="codedel">−663</span></td><td>1</td><td><a href="https://github.com/vllm-project/vllm-omni/issues/9511" target="_blank">#9511</a></td><td>265</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">Bounty-hunter</td><td><span class="score">67</span><br><span class="muted">评论 ×67</span></td><td>0</td><td><span class="muted">新增</span> —<br><span class="muted">合入</span> —</td><td>—</td><td>0</td><td>—</td><td>67</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">Dong1017</td><td><span class="score">61</span><br><span class="muted">合入<500行 ×4 · 新增PR ×5 · 评论 ×39</span></td><td>5</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9570" target="_blank">#9570</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9513" target="_blank">#9513</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9421" target="_blank">#9421</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9381" target="_blank">#9381</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9378" target="_blank">#9378</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9421" target="_blank" class="">#9421</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9381" target="_blank" class="">#9381</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9331" target="_blank" class="pr-pre">#9331<sup>↑</sup></a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank" class="pr-pre">#9030<sup>↑</sup></a></td><td><span class="codeadd">+496</span> <span class="codedel">−66</span></td><td>0</td><td>—</td><td>39</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">BLANKETusers</td><td><span class="score">59</span><br><span class="muted">合入<500行 ×2 · 新增PR ×5 · Issue ×1 · 评论 ×42</span></td><td>5</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9690" target="_blank">#9690</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9655" target="_blank">#9655</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9527" target="_blank">#9527</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9471" target="_blank">#9471</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank">#9443</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9471" target="_blank" class="">#9471</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank" class="">#9443</a></td><td><span class="codeadd">+1458</span> <span class="codedel">−129</span></td><td>1</td><td><a href="https://github.com/vllm-project/vllm-omni/issues/9663" target="_blank">#9663</a></td><td>42</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">ShengDev</td><td><span class="score">51</span><br><span class="muted">合入≥500行 ×1 · 合入<500行 ×3 · 新增PR ×4 · Issue ×1 · 评论 ×28</span></td><td>4</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">#9580</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">#9482</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9478" target="_blank">#9478</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9394" target="_blank">#9394</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank" class="">#9580</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank" class="">#9482</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9394" target="_blank" class="">#9394</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9219" target="_blank" class="pr-pre">#9219<sup>↑</sup></a></td><td><span class="codeadd">+1872</span> <span class="codedel">−424</span></td><td>1</td><td><a href="https://github.com/vllm-project/vllm-omni/issues/9711" target="_blank">#9711</a></td><td>28</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">psv666</td><td><span class="score">49</span><br><span class="muted">合入<500行 ×3 · 新增PR ×4 · Issue ×1 · 评论 ×31</span></td><td>4</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">#9623</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9531" target="_blank">#9531</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">#9417</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank">#9390</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9531" target="_blank" class="">#9531</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank" class="">#9417</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank" class="">#9390</a></td><td><span class="codeadd">+1448</span> <span class="codedel">−532</span></td><td>1</td><td><a href="https://github.com/vllm-project/vllm-omni/issues/9456" target="_blank">#9456</a></td><td>31</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">zengchuang-hw</td><td><span class="score">22</span><br><span class="muted">合入<500行 ×2 · 新增PR ×2 · Issue ×1 · 评论 ×11</span></td><td>2</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9574" target="_blank">#9574</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9563" target="_blank">#9563</a><br><span class="muted">合入</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9174" target="_blank" class="pr-pre">#9174<sup>↑</sup></a>、<a href="https://github.com/vllm-project/vllm-omni/pull/8737" target="_blank" class="pr-pre">#8737<sup>↑</sup></a></td><td><span class="codeadd">+140</span> <span class="codedel">−9</span></td><td>1</td><td><a href="https://github.com/vllm-project/vllm-omni/issues/9558" target="_blank">#9558</a></td><td>11</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">wangqiankun13</td><td><span class="score">9</span><br><span class="muted">新增PR ×2 · 评论 ×5</span></td><td>2</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9647" target="_blank">#9647</a>、<a href="https://github.com/vllm-project/vllm-omni/pull/9462" target="_blank">#9462</a><br><span class="muted">合入</span> —</td><td><span class="codeadd">+216</span> <span class="codedel">−1</span></td><td>0</td><td>—</td><td>5</td><td><span class="badge b-active">活跃</span></td></tr>
+        <tr><td class="member">y-null</td><td><span class="score">8</span><br><span class="muted">新增PR ×1 · 评论 ×6</span></td><td>1</td><td><span class="muted">新增</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9621" target="_blank">#9621</a><br><span class="muted">合入</span> —</td><td><span class="codeadd">+1032</span> <span class="codedel">−161</span></td><td>0</td><td>—</td><td>6</td><td><span class="badge b-active">活跃</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>PR 明细 <span class="tag">新增 38 个 · 合入 26 个</span></h2>
+    <div class="sec-desc">「新增 PR」＝ 窗口内新提交；「合入 PR」＝ 窗口内被合并（含窗口开启前创建、窗口内合入的）。Open 时长以扫描时刻（北京时间 2026-11-02 08:01）为基准。</div>
+    <h3 class="h3">合入 PR（26 个，含 7 个窗口前创建）</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>PR</th><th>作者</th><th>代码量</th><th>合并时间</th><th>从提交到合入</th></tr></thead>
+      <tbody><tr>
+          <td class="pr-title"><span class="pr-id">#9219</span><a href="https://github.com/vllm-project/vllm-omni/pull/9219" target="_blank">[Bugfix] Stabilize diffusion master_port precedence tests</a><br><span class="muted">1 文件 · 3 commit · 2026-10-21 20:28 提交 · 窗口前创建</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+62</span> <span class="codedel">−39</span></td>
+          <td>2026-10-26 12:03 合并</td>
+          <td>历时 ≈ 4 天 16 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9394</span><a href="https://github.com/vllm-project/vllm-omni/pull/9394" target="_blank">[cherry-pick][release/v0.32.0] cherry-pick #9219</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 14:20 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+62</span> <span class="codedel">−39</span></td>
+          <td>2026-10-26 14:49 合并</td>
+          <td>历时 ≈ 0.5 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9331</span><a href="https://github.com/vllm-project/vllm-omni/pull/9331" target="_blank">[Doc] MiniMax-H3: document the Ref2VA dialogue prompt contract</a><br><span class="muted">1 文件 · 2 commit · 2026-10-24 20:29 提交 · 窗口前创建</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+33</span> <span class="codedel">−0</span></td>
+          <td>2026-10-26 14:54 合并</td>
+          <td>历时 ≈ 42.4 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9390</span><a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank">[Bugfix] Reject invalid Omni-DuplexEval judge scores</a><br><span class="muted">7 文件 · 2 commit · 2026-10-26 12:49 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+360</span> <span class="codedel">−38</span></td>
+          <td>2026-10-26 16:37 合并</td>
+          <td>历时 ≈ 3.8 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9406</span><a href="https://github.com/vllm-project/vllm-omni/pull/9406" target="_blank">[CI/Build] Avoid busy polling in stage memory lifecycle tests</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 16:30 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+3</span> <span class="codedel">−1</span></td>
+          <td>2026-10-26 17:08 合并</td>
+          <td>历时 ≈ 0.6 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9388</span><a href="https://github.com/vllm-project/vllm-omni/pull/9388" target="_blank">[CI/Build] Update MiniCPM-o A3 C8 TTFT baseline</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 12:22 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+2</span> <span class="codedel">−2</span></td>
+          <td>2026-10-26 17:35 合并</td>
+          <td>历时 ≈ 5.2 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9308</span><a href="https://github.com/vllm-project/vllm-omni/pull/9308" target="_blank">[Perf][Ascend] Replay Drama 3 decode steps as FULL graphs</a><br><span class="muted">5 文件 · 6 commit · 2026-10-24 02:03 提交 · 窗口前创建</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+67</span> <span class="codedel">−6</span></td>
+          <td>2026-10-26 20:55 合并</td>
+          <td>历时 ≈ 2 天 19 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#8737</span><a href="https://github.com/vllm-project/vllm-omni/pull/8737" target="_blank">[Hardware][NPU] Support SeedVR2 video restoration on Ascend NPU</a><br><span class="muted">7 文件 · 2 commit · 2026-10-10 22:12 提交 · 窗口前创建</span></td>
+          <td class="member">zengchuang-hw</td>
+          <td><span class="codeadd">+212</span> <span class="codedel">−7</span></td>
+          <td>2026-10-26 21:48 合并</td>
+          <td>历时 ≈ 15 天 24 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9386</span><a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank">[Bugfix] Align MiniCPM-o reference audio with Transformers while retaining vision SDPA</a><br><span class="muted">27 文件 · 13 commit · 2026-10-26 11:46 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+1082</span> <span class="codedel">−47</span></td>
+          <td>2026-10-27 00:08 合并</td>
+          <td>历时 ≈ 12.4 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9444</span><a href="https://github.com/vllm-project/vllm-omni/pull/9444" target="_blank">[CI/Build] Keep AMD nightly dependency check independent of job count</a><br><span class="muted">1 文件 · 1 commit · 2026-10-27 09:53 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+1</span> <span class="codedel">−1</span></td>
+          <td>2026-10-27 10:38 合并</td>
+          <td>历时 ≈ 0.8 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9443</span><a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank">[Bugfix][Diffusion] Prepare the MoE LoRA context</a><br><span class="muted">3 文件 · 4 commit · 2026-10-27 09:37 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+386</span> <span class="codedel">−37</span></td>
+          <td>2026-10-27 14:53 合并</td>
+          <td>历时 ≈ 5.3 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9381</span><a href="https://github.com/vllm-project/vllm-omni/pull/9381" target="_blank">[Doc][release/v0.32.0] MiniMax-H3: separate reported observations from verified claims</a><br><span class="muted">1 文件 · 1 commit · 2026-10-26 11:07 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+5</span> <span class="codedel">−2</span></td>
+          <td>2026-10-27 15:52 合并</td>
+          <td>历时 ≈ 28.8 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9174</span><a href="https://github.com/vllm-project/vllm-omni/pull/9174" target="_blank">[Hardware][NPU] Add HunyuanVideo-1.5 accuracy coverage</a><br><span class="muted">3 文件 · 4 commit · 2026-10-20 22:08 提交 · 窗口前创建</span></td>
+          <td class="member">zengchuang-hw</td>
+          <td><span class="codeadd">+37</span> <span class="codedel">−30</span></td>
+          <td>2026-10-27 17:16 合并</td>
+          <td>历时 ≈ 6 天 19 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9030</span><a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank">[CI/Build] Enable validated MiniMax-H3 A3 CI coverage</a><br><span class="muted">14 文件 · 31 commit · 2026-10-17 00:01 提交 · 窗口前创建</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+249</span> <span class="codedel">−35</span></td>
+          <td>2026-10-27 20:18 合并</td>
+          <td>历时 ≈ 10 天 20 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9421</span><a href="https://github.com/vllm-project/vllm-omni/pull/9421" target="_blank">[Bugfix] Re-bound Wan VAE channels-last bf16 decoder test tolerance</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 22:10 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+11</span> <span class="codedel">−8</span></td>
+          <td>2026-10-27 23:45 合并</td>
+          <td>历时 ≈ 25.6 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9463</span><a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">[Hardware][Ascend] Fold HiFT weight norms when loading Token2Wav</a><br><span class="muted">7 文件 · 8 commit · 2026-10-27 14:22 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+291</span> <span class="codedel">−28</span></td>
+          <td>2026-10-28 09:32 合并</td>
+          <td>历时 ≈ 19.2 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9486</span><a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">[Bugfix] Keep a deferred duplex commit on cancel; stop the client-VAD replay teardown truncating its last answer</a><br><span class="muted">4 文件 · 4 commit · 2026-10-27 22:34 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+289</span> <span class="codedel">−3</span></td>
+          <td>2026-10-28 14:20 合并</td>
+          <td>历时 ≈ 15.8 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9417</span><a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">[Bugfix] Preserve Omni-DuplexEval video frames and input tails</a><br><span class="muted">6 文件 · 3 commit · 2026-10-26 20:20 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+301</span> <span class="codedel">−36</span></td>
+          <td>2026-10-28 16:41 合并</td>
+          <td>历时 ≈ 44.3 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9482</span><a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">[Experimental] Add first-chunk clean sink to Same-Step inference</a><br><span class="muted">11 文件 · 12 commit · 2026-10-27 18:52 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+614</span> <span class="codedel">−135</span></td>
+          <td>2026-10-28 16:50 合并</td>
+          <td>历时 ≈ 22 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9531</span><a href="https://github.com/vllm-project/vllm-omni/pull/9531" target="_blank">[CI/Build] Trim Qwen3-Omni artifacts and remove duplex Seed-TTS perf jobs</a><br><span class="muted">7 文件 · 2 commit · 2026-10-28 18:14 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+16</span> <span class="codedel">−268</span></td>
+          <td>2026-10-29 15:33 合并</td>
+          <td>历时 ≈ 21.3 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9471</span><a href="https://github.com/vllm-project/vllm-omni/pull/9471" target="_blank">[Bugfix][CI] Raise HunyuanImage-3 online I2I stage init timeout</a><br><span class="muted">1 文件 · 4 commit · 2026-10-27 15:46 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+6</span> <span class="codedel">−2</span></td>
+          <td>2026-10-29 16:41 合并</td>
+          <td>历时 ≈ 2 天 1 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9526</span><a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">[Core] Reduce Omni output and idle generation overhead</a><br><span class="muted">16 文件 · 9 commit · 2026-10-28 16:54 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+536</span> <span class="codedel">−64</span></td>
+          <td>2026-10-29 16:49 合并</td>
+          <td>历时 ≈ 23.9 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9560</span><a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank">[Bugfix] Keep Drama 3 on its NPU model state under Model Runner V2</a><br><span class="muted">4 文件 · 4 commit · 2026-10-29 12:54 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+100</span> <span class="codedel">−3</span></td>
+          <td>2026-10-29 17:23 合并</td>
+          <td>历时 ≈ 4.5 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9181</span><a href="https://github.com/vllm-project/vllm-omni/pull/9181" target="_blank">[CI/Build] Remove MiniCPM-o Seed-TTS BF16 attention-cache test</a><br><span class="muted">1 文件 · 6 commit · 2026-10-21 09:20 提交 · 窗口前创建</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+5</span> <span class="codedel">−31</span></td>
+          <td>2026-10-29 18:15 合并</td>
+          <td>历时 ≈ 8 天 9 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9580</span><a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">[Bugfix][Diffusion] Reject empty prompt and num_inference_steps&lt;=0 for FLUX.2-dev</a><br><span class="muted">2 文件 · 4 commit · 2026-10-29 18:31 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+90</span> <span class="codedel">−1</span></td>
+          <td>2026-10-29 21:39 合并</td>
+          <td>历时 ≈ 3.1 小时</td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9635</span><a href="https://github.com/vllm-project/vllm-omni/pull/9635" target="_blank">[CI/Build] Remove MiniCPM-o duplex Seed-TTS performance test</a><br><span class="muted">4 文件 · 1 commit · 2026-10-30 15:34 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+0</span> <span class="codedel">−135</span></td>
+          <td>2026-10-30 16:07 合并</td>
+          <td>历时 ≈ 0.5 小时</td>
+        </tr></tbody>
+    </table></div>
+<h3 class="h3">新增 PR（38 个）</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>PR</th><th>作者</th><th>代码量</th><th>Open 时长</th><th>状态</th></tr></thead>
+      <tbody><tr>
+          <td class="pr-title"><span class="pr-id">#9580</span><a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">[Bugfix][Diffusion] Reject empty prompt and num_inference_steps&lt;=0 for FLUX.2-dev</a><br><span class="muted">2 文件 · 4 commit · 2026-10-29 18:31 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+90</span> <span class="codedel">−1</span></td>
+          <td>≈ 3.1 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9482</span><a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">[Experimental] Add first-chunk clean sink to Same-Step inference</a><br><span class="muted">11 文件 · 12 commit · 2026-10-27 18:52 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+614</span> <span class="codedel">−135</span></td>
+          <td>≈ 22 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9478</span><a href="https://github.com/vllm-project/vllm-omni/pull/9478" target="_blank">[Experimental][Perf] CausVid Stream-Batch R&gt;1 request lanes</a><br><span class="muted">15 文件 · 5 commit · 2026-10-27 17:08 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+1106</span> <span class="codedel">−249</span></td>
+          <td>≈ 0.2 小时（至关闭）</td>
+          <td><span class="badge b-closed">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9394</span><a href="https://github.com/vllm-project/vllm-omni/pull/9394" target="_blank">[cherry-pick][release/v0.32.0] cherry-pick #9219</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 14:20 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="codeadd">+62</span> <span class="codedel">−39</span></td>
+          <td>≈ 0.5 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9690</span><a href="https://github.com/vllm-project/vllm-omni/pull/9690" target="_blank">[cherry-pick][main] cherry-pick #9515: [Bugfix][Diffusion] Detach the idle MoE LoRA context on Ascend</a><br><span class="muted">4 文件 · 1 commit · 2026-10-31 18:07 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+266</span> <span class="codedel">−1</span></td>
+          <td>≈ 37.9 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9655</span><a href="https://github.com/vllm-project/vllm-omni/pull/9655" target="_blank">[Doc] RFC: paged independent-request batching and step execution (HunyuanImage3)</a><br><span class="muted">4 文件 · 1 commit · 2026-10-30 21:13 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+249</span> <span class="codedel">−0</span></td>
+          <td>≈ 5.2 小时（至关闭）</td>
+          <td><span class="badge b-closed">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9527</span><a href="https://github.com/vllm-project/vllm-omni/pull/9527" target="_blank">[Bugfix][MammothModa2] Fix AR t2i decode under cudagraph FULL capture</a><br><span class="muted">5 文件 · 3 commit · 2026-10-28 17:29 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+551</span> <span class="codedel">−89</span></td>
+          <td>≈ 4 天 15 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9471</span><a href="https://github.com/vllm-project/vllm-omni/pull/9471" target="_blank">[Bugfix][CI] Raise HunyuanImage-3 online I2I stage init timeout</a><br><span class="muted">1 文件 · 4 commit · 2026-10-27 15:46 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+6</span> <span class="codedel">−2</span></td>
+          <td>≈ 2 天 1 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9443</span><a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank">[Bugfix][Diffusion] Prepare the MoE LoRA context</a><br><span class="muted">3 文件 · 4 commit · 2026-10-27 09:37 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="codeadd">+386</span> <span class="codedel">−37</span></td>
+          <td>≈ 5.3 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9623</span><a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">[CI/Build] Add Qwen3-Omni duplex nightly concurrency sweep</a><br><span class="muted">19 文件 · 7 commit · 2026-10-30 10:21 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+771</span> <span class="codedel">−190</span></td>
+          <td>≈ 2 天 22 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9531</span><a href="https://github.com/vllm-project/vllm-omni/pull/9531" target="_blank">[CI/Build] Trim Qwen3-Omni artifacts and remove duplex Seed-TTS perf jobs</a><br><span class="muted">7 文件 · 2 commit · 2026-10-28 18:14 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+16</span> <span class="codedel">−268</span></td>
+          <td>≈ 21.3 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9417</span><a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">[Bugfix] Preserve Omni-DuplexEval video frames and input tails</a><br><span class="muted">6 文件 · 3 commit · 2026-10-26 20:20 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+301</span> <span class="codedel">−36</span></td>
+          <td>≈ 44.3 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9390</span><a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank">[Bugfix] Reject invalid Omni-DuplexEval judge scores</a><br><span class="muted">7 文件 · 2 commit · 2026-10-26 12:49 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="codeadd">+360</span> <span class="codedel">−38</span></td>
+          <td>≈ 3.8 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9574</span><a href="https://github.com/vllm-project/vllm-omni/pull/9574" target="_blank">[Doc][NPU] Record MAGI-2 Preview on 64 GiB 910B3 devices</a><br><span class="muted">2 文件 · 1 commit · 2026-10-29 16:59 提交</span></td>
+          <td class="member">zengchuang-hw</td>
+          <td><span class="codeadd">+75</span> <span class="codedel">−6</span></td>
+          <td>≈ 3 天 15 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9563</span><a href="https://github.com/vllm-project/vllm-omni/pull/9563" target="_blank">[Bugfix][DLO] Accept shape-changing loader transforms in rank-local mmap</a><br><span class="muted">2 文件 · 1 commit · 2026-10-29 13:22 提交</span></td>
+          <td class="member">zengchuang-hw</td>
+          <td><span class="codeadd">+65</span> <span class="codedel">−3</span></td>
+          <td>≈ 3 天 19 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9698</span><a href="https://github.com/vllm-project/vllm-omni/pull/9698" target="_blank">[Hardware][Ascend] Optimize MiniMax-H3 Ref2VA caching and shutdown</a><br><span class="muted">17 文件 · 11 commit · 2026-11-01 02:49 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+523</span> <span class="codedel">−78</span></td>
+          <td>≈ 29.4 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9635</span><a href="https://github.com/vllm-project/vllm-omni/pull/9635" target="_blank">[CI/Build] Remove MiniCPM-o duplex Seed-TTS performance test</a><br><span class="muted">4 文件 · 1 commit · 2026-10-30 15:34 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+0</span> <span class="codedel">−135</span></td>
+          <td>≈ 0.5 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9617</span><a href="https://github.com/vllm-project/vllm-omni/pull/9617" target="_blank">[Model][NPU] Host-side codec sampling with pipelined boundary heads for MiniCPM-o</a><br><span class="muted">1 文件 · 3 commit · 2026-10-30 09:41 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+311</span> <span class="codedel">−18</span></td>
+          <td>≈ 0.3 小时（至关闭）</td>
+          <td><span class="badge b-closed">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9589</span><a href="https://github.com/vllm-project/vllm-omni/pull/9589" target="_blank">[Model][NPU] Host-side codec sampling with pipelined boundary heads for MiniCPM-o</a><br><span class="muted">2 文件 · 2 commit · 2026-10-29 22:28 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+349</span> <span class="codedel">−18</span></td>
+          <td>≈ 10.3 小时（至关闭）</td>
+          <td><span class="badge b-closed">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9584</span><a href="https://github.com/vllm-project/vllm-omni/pull/9584" target="_blank">[Model] Enable Qwen3-Omni fused sampling and batched codec graphs by default</a><br><span class="muted">2 文件 · 2 commit · 2026-10-29 20:23 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+42</span> <span class="codedel">−0</span></td>
+          <td>≈ 3 天 12 小时</td>
+          <td><span class="badge b-open">OPEN</span> <span class="badge b-draft">Draft</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9583</span><a href="https://github.com/vllm-project/vllm-omni/pull/9583" target="_blank">[Model] Improve MiniCPM-o concurrency and default CUDA to MRv2</a><br><span class="muted">30 文件 · 15 commit · 2026-10-29 19:35 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+1002</span> <span class="codedel">−115</span></td>
+          <td>≈ 3 天 13 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9578</span><a href="https://github.com/vllm-project/vllm-omni/pull/9578" target="_blank">[Core] Default Qwen3-Omni CUDA serving to model runner v2</a><br><span class="muted">40 文件 · 5 commit · 2026-10-29 18:01 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+2045</span> <span class="codedel">−150</span></td>
+          <td>≈ 3 天 14 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9560</span><a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank">[Bugfix] Keep Drama 3 on its NPU model state under Model Runner V2</a><br><span class="muted">4 文件 · 4 commit · 2026-10-29 12:54 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+100</span> <span class="codedel">−3</span></td>
+          <td>≈ 4.5 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9526</span><a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">[Core] Reduce Omni output and idle generation overhead</a><br><span class="muted">16 文件 · 9 commit · 2026-10-28 16:54 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+536</span> <span class="codedel">−64</span></td>
+          <td>≈ 23.9 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9486</span><a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">[Bugfix] Keep a deferred duplex commit on cancel; stop the client-VAD replay teardown truncating its last answer</a><br><span class="muted">4 文件 · 4 commit · 2026-10-27 22:34 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+289</span> <span class="codedel">−3</span></td>
+          <td>≈ 15.8 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9463</span><a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">[Hardware][Ascend] Fold HiFT weight norms when loading Token2Wav</a><br><span class="muted">7 文件 · 8 commit · 2026-10-27 14:22 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+291</span> <span class="codedel">−28</span></td>
+          <td>≈ 19.2 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9444</span><a href="https://github.com/vllm-project/vllm-omni/pull/9444" target="_blank">[CI/Build] Keep AMD nightly dependency check independent of job count</a><br><span class="muted">1 文件 · 1 commit · 2026-10-27 09:53 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+1</span> <span class="codedel">−1</span></td>
+          <td>≈ 0.8 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9406</span><a href="https://github.com/vllm-project/vllm-omni/pull/9406" target="_blank">[CI/Build] Avoid busy polling in stage memory lifecycle tests</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 16:30 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+3</span> <span class="codedel">−1</span></td>
+          <td>≈ 0.6 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9388</span><a href="https://github.com/vllm-project/vllm-omni/pull/9388" target="_blank">[CI/Build] Update MiniCPM-o A3 C8 TTFT baseline</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 12:22 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+2</span> <span class="codedel">−2</span></td>
+          <td>≈ 5.2 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9386</span><a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank">[Bugfix] Align MiniCPM-o reference audio with Transformers while retaining vision SDPA</a><br><span class="muted">27 文件 · 13 commit · 2026-10-26 11:46 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="codeadd">+1082</span> <span class="codedel">−47</span></td>
+          <td>≈ 12.4 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9621</span><a href="https://github.com/vllm-project/vllm-omni/pull/9621" target="_blank">[Model][NPU] Host-side codec sampling with pipelined boundary heads for MiniCPM-o</a><br><span class="muted">14 文件 · 14 commit · 2026-10-30 10:16 提交</span></td>
+          <td class="member">y-null</td>
+          <td><span class="codeadd">+1032</span> <span class="codedel">−161</span></td>
+          <td>≈ 2 天 22 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9570</span><a href="https://github.com/vllm-project/vllm-omni/pull/9570" target="_blank">[Bugfix] Fix GLM-Image positions for requested grids</a><br><span class="muted">12 文件 · 3 commit · 2026-10-29 16:19 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+304</span> <span class="codedel">−39</span></td>
+          <td>≈ 3 天 16 小时</td>
+          <td><span class="badge b-open">OPEN</span> <span class="badge b-draft">Draft</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9513</span><a href="https://github.com/vllm-project/vllm-omni/pull/9513" target="_blank">[Doc] Spell out diffusion LoRA scale semantics</a><br><span class="muted">2 文件 · 1 commit · 2026-10-28 14:11 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+37</span> <span class="codedel">−1</span></td>
+          <td>≈ 4 天 18 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9421</span><a href="https://github.com/vllm-project/vllm-omni/pull/9421" target="_blank">[Bugfix] Re-bound Wan VAE channels-last bf16 decoder test tolerance</a><br><span class="muted">1 文件 · 2 commit · 2026-10-26 22:10 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+11</span> <span class="codedel">−8</span></td>
+          <td>≈ 25.6 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9381</span><a href="https://github.com/vllm-project/vllm-omni/pull/9381" target="_blank">[Doc][release/v0.32.0] MiniMax-H3: separate reported observations from verified claims</a><br><span class="muted">1 文件 · 1 commit · 2026-10-26 11:07 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+5</span> <span class="codedel">−2</span></td>
+          <td>≈ 28.8 小时（已合入）</td>
+          <td><span class="badge b-merged">MERGED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9378</span><a href="https://github.com/vllm-project/vllm-omni/pull/9378" target="_blank">[Bugfix][release/v0.32.0] Enforce the stage circuit breaker at submission and completion</a><br><span class="muted">3 文件 · 3 commit · 2026-10-26 10:02 提交</span></td>
+          <td class="member">Dong1017</td>
+          <td><span class="codeadd">+139</span> <span class="codedel">−16</span></td>
+          <td>≈ 6.7 小时（至关闭）</td>
+          <td><span class="badge b-closed">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9647</span><a href="https://github.com/vllm-project/vllm-omni/pull/9647" target="_blank">[Bugfix][Diffusion] Mark the default FlashAttention version as a compile-time constant</a><br><span class="muted">2 文件 · 2 commit · 2026-10-30 19:01 提交</span></td>
+          <td class="member">wangqiankun13</td>
+          <td><span class="codeadd">+122</span> <span class="codedel">−1</span></td>
+          <td>≈ 2 天 13 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9462</span><a href="https://github.com/vllm-project/vllm-omni/pull/9462" target="_blank">[Perf][Diffusion] Synchronize device after dummy warmup run</a><br><span class="muted">2 文件 · 2 commit · 2026-10-27 14:22 提交</span></td>
+          <td class="member">wangqiankun13</td>
+          <td><span class="codeadd">+94</span> <span class="codedel">−0</span></td>
+          <td>≈ 5 天 18 小时</td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Issue 明细 <span class="tag">5 个</span></h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Issue</th><th>作者</th><th>类型</th><th>状态</th></tr></thead>
+      <tbody><tr>
+          <td class="pr-title"><span class="pr-id">#9711</span><a href="https://github.com/vllm-project/vllm-omni/issues/9711" target="_blank">[RFC]: Refactor AR-DiT execution to integrate Noisy PP and session-aware KV</a><br><span class="muted">2026-11-01 22:27 提交</span></td>
+          <td class="member">ShengDev</td>
+          <td><span class="badge b-perf">RFC</span></td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9663</span><a href="https://github.com/vllm-project/vllm-omni/issues/9663" target="_blank">[Doc] RFC: paged independent-request batching and step execution (HunyuanImage3)</a><br><span class="muted">2026-10-31 02:24 提交</span></td>
+          <td class="member">BLANKETusers</td>
+          <td><span class="badge b-perf">Doc</span></td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9456</span><a href="https://github.com/vllm-project/vllm-omni/issues/9456" target="_blank">[Bug][Perf][CUDA]: #9203 (thinker prefix caching on) adds a 1-2s first-prefill stall that inflates Qwen3-Omni TTFT p99 ~2-4x on CUDA</a><br><span class="muted">2026-10-27 12:18 提交</span></td>
+          <td class="member">psv666</td>
+          <td><span class="badge b-perf">Bug</span></td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9558</span><a href="https://github.com/vllm-project/vllm-omni/issues/9558" target="_blank">[Bug]: DLO rank-local mmap rejects shape-changing loader transforms (MAGI-2 SP-only DLO)</a><br><span class="muted">2026-10-29 12:31 提交</span></td>
+          <td class="member">zengchuang-hw</td>
+          <td><span class="badge b-perf">Bug</span></td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr>
+        <tr>
+          <td class="pr-title"><span class="pr-id">#9511</span><a href="https://github.com/vllm-project/vllm-omni/issues/9511" target="_blank">[RFC]: Support Hy-SimulMT-30B-A3B (real-time simultaneous speech translation)</a><br><span class="muted">2026-10-28 13:54 提交</span></td>
+          <td class="member">amy-why-3459</td>
+          <td><span class="badge b-perf">new model</span> <span class="muted">label: new model, RFC</span></td>
+          <td><span class="badge b-open">OPEN</span></td>
+        </tr></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>评论明细 <span class="tag">共 494 条</span></h2>
+    <div class="sec-desc">构成：会话评论 179 条 ＋ 行内 Review 评论 202 条 ＋ 正式评审 113 条。</div>
+    <div class="cmt-grid">
+      <div class="cmt-card">
+        <div class="head"><span class="who">ShengDev</span><span class="count">28</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9576" target="_blank">条目 #9576</a> 会话评论<br><span class="muted">“@Shaun-Walsh hi, pr #9580 fixes issue https://github.com/vllm-project/…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">PR #9580</a> 行内评论<br><span class="muted">“Good catch — fixed in `f4587ee`. Sampling now overrides only when not …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">PR #9580</a> 会话评论 ×3<br><span class="muted">“## Self-review Reviewed at tip `cc3e643`. **Scope** - `Flux2Pipeline.c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9565" target="_blank">条目 #9565</a> 会话评论<br><span class="muted">“@kunkunblueberry Thanks for your interest in T1! It mainly covers two …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">PR #9482</a> 会话评论 ×5<br><span class="muted">“Self-reviewed at `7a142973c` — ready for review. @Bounty-hunter @amy-w…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">PR #9482</a> 行内评论 ×6<br><span class="muted">“@amy-why-3459 Addressed the same-rank clean handoff in a00c8a394. For …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9368" target="_blank">条目 #9368</a> 会话评论<br><span class="muted">“Split note: Stream-Batch `R&gt;1` product surface (`WanCellStream` / `cau…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9338" target="_blank">条目 #9338</a> 行内评论 ×2<br><span class="muted">“**Selective `offload_components` skips VAE but still sets `_cpu_offloa…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9219" target="_blank">PR #9219</a> 会话评论 ×5<br><span class="muted">“Self-review for `90f017eb2`: - Scope is still one test file. `_resolve…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9219" target="_blank">PR #9219</a> 行内评论 ×2<br><span class="muted">“Restored the bounded resolve-and-bind in `90f017eb2`, instead of renam…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9338" target="_blank">条目 #9338</a> 提交正式评审（COMMENTED）<br><span class="muted">“Two nits from review — happy to discuss either.”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">BLANKETusers</span><span class="count">42</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9663" target="_blank">Issue #9663</a> 会话评论<br><span class="muted">“Revised the design contract after re-checking the grouped-step smoke a…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9542" target="_blank">条目 #9542</a> 会话评论<br><span class="muted">“Thanks for the follow-ups on all three points — happy to close them ou…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9192" target="_blank">条目 #9192</a> 会话评论<br><span class="muted">“@zwhzzz0821 claiming **Independent-request batching and step execution…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9542" target="_blank">条目 #9542</a> 行内评论 ×3<br><span class="muted">“Explicit `paged_scheduler` never consults `model_supports_paged_kv`. S…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9527" target="_blank">PR #9527</a> 会话评论 ×3<br><span class="muted">“## Author self-review Checked against the #7318 online FULL path (gree…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6060" target="_blank">条目 #6060</a> 行内评论 ×2<br><span class="muted">“Adding `npu: A3` on the four shared CUDA cases (also L82 / L161 / L240…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9527" target="_blank">PR #9527</a> 行内评论 ×4<br><span class="muted">“Addressed in 115375a99: capturing with `gen_token_mask is None` / empt…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/7318" target="_blank">条目 #7318</a> 会话评论<br><span class="muted">“@zengchuang-hw Thanks for the ping. **Root cause:** With `compilation_…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9514" target="_blank">条目 #9514</a> 会话评论<br><span class="muted">“[9515](https://github.com/vllm-project/vllm-omni/pull/9515) test resul…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/7443" target="_blank">条目 #7443</a> 会话评论<br><span class="muted">“Hi @BeatSeat — thanks for owning this and for landing the DiT side in …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9515" target="_blank">条目 #9515</a> 行内评论 ×2<br><span class="muted">“English: this sentence treats TRTLLM and Triton as the same kernel. On…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9515" target="_blank">条目 #9515</a> 会话评论<br><span class="muted">“(English version of the review.) Keeping wrap at init and only changin…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9471" target="_blank">PR #9471</a> 会话评论<br><span class="muted">“Self-review: Verified the HunyuanImage-3 online I2I timeout-only chang…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9382" target="_blank">条目 #9382</a> 行内评论<br><span class="muted">“`item_indices` is keyed by `(req_id, identifier)`. Two scheduled featu…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9462" target="_blank">条目 #9462</a> 行内评论<br><span class="muted">“This drains with engine-local `current_omni_platform.synchronize()` af…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9466" target="_blank">条目 #9466</a> 行内评论<br><span class="muted">“On typed `add_lora` failure this branch returns `{&quot;supported&quot;: False, …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank">PR #9443</a> 会话评论<br><span class="muted">“Thanks for the follow-up review on `c993dec`. Re-ran the updated manag…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9451" target="_blank">条目 #9451</a> 会话评论<br><span class="muted">“I&#39;d like to take this. From the nightly log, `test_image_to_image_alig…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9443" target="_blank">PR #9443</a> 行内评论<br><span class="muted">“Thanks for the catch — agreed. After committing `_active_adapter_id = …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9006" target="_blank">条目 #9006</a> 行内评论<br><span class="muted">“`actual_q` / `actual_kv` are rebuilt with `cu_seqlens_*.detach().cpu()…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank">条目 #9030</a> 行内评论<br><span class="muted">“This ORs `npu:A3` onto `test_minimax_h3_t2v_dlo_4gpu`, but the same ca…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9335" target="_blank">条目 #9335</a> 行内评论 ×3<br><span class="muted">“Confirming the tri-state: `None` (undeclared custom pipeline) and `Tru…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5762" target="_blank">条目 #5762</a> 行内评论 ×2<br><span class="muted">“Good that both tests share `core_model` + `cpu`. Please confirm a fres…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9542" target="_blank">条目 #9542</a> 提交正式评审（COMMENTED）<br><span class="muted">“See inline comments.”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9515" target="_blank">条目 #9515</a> 提交正式评审（COMMENTED）<br><span class="muted">“wrap 放 init、只改 publish，这个分层没问题，worker 也别加 `if npu`。NPU idle 拆 context …”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9335" target="_blank">条目 #9335</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks @fusheng-ji — reviewing this as a diffusion-runtime admission c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/8098" target="_blank">条目 #8098</a> 会话评论<br><span class="muted">“**Status update** The bridge described in this RFC has landed in [#832…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7392" target="_blank">条目 #7392</a> 会话评论<br><span class="muted">“Following up on my earlier P1 note about sampling / `extra_args` prece…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7169" target="_blank">条目 #7169</a> 会话评论<br><span class="muted">“Thanks for the careful write-up and for keeping this rebased — taking …”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/5762" target="_blank">条目 #5762</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks @l-wave — looking at this as HunyuanImage3 model owner. ### Wha…”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">psv666</span><span class="count">31</span></div>
+        <ul>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">PR #9623</a> 行内评论 ×9<br><span class="muted">“Fixed in 9956b1470. The Seed-TTS producer now retains both raw respons…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6372" target="_blank">条目 #6372</a> 会话评论<br><span class="muted">“Reviewed `03c334818...0bf085cf7`. Two behavior issues remain: - [ ] **…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">PR #9623</a> 会话评论 ×4<br><span class="muted">“@natureofnature PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9508" target="_blank">条目 #9508</a> 会话评论<br><span class="muted">“Hi @ztang2370 — you&#39;re already assigned (by @natureofnature on 10-29),…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9531" target="_blank">PR #9531</a> 会话评论 ×2<br><span class="muted">“@yenuo26 @natureofnature @amy-why-3459 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9347" target="_blank">条目 #9347</a> 会话评论 ×2<br><span class="muted">“#9456 related | Buildkite | Qwen/Qwen3-Omni-30B-A3B-Instruct | H100 | …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9485" target="_blank">条目 #9485</a> 会话评论<br><span class="muted">“@amy-why-3459 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">PR #9417</a> 会话评论 ×3<br><span class="muted">“@amy-why-3459 @natureofnature PTAL”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">PR #9417</a> 行内评论 ×5<br><span class="muted">“Kept option (a): the complete selected video is intentionally streamed…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank">PR #9390</a> 行内评论 ×2<br><span class="muted">“I took the documented strict-contract option in 95f6c1691. The parser …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9390" target="_blank">PR #9390</a> 会话评论<br><span class="muted">“@amy-why-3459 @natureofnature PTAL”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">zengchuang-hw</span><span class="count">11</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9563" target="_blank">PR #9563</a> 会话评论 ×3<br><span class="muted">“Thanks for the independent verification — the reproduction and the neg…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9009" target="_blank">条目 #9009</a> 会话评论<br><span class="muted">“@tzhouam any process?”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9008" target="_blank">条目 #9008</a> 会话评论<br><span class="muted">“LGTM”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/7318" target="_blank">条目 #7318</a> 会话评论<br><span class="muted">“@BLANKETusers PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank">条目 #9030</a> 会话评论<br><span class="muted">“@Dong1017 could u plz add changes of https://github.com/vllm-project/v…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/8725" target="_blank">条目 #8725</a> 会话评论<br><span class="muted">“补充完整四卡复测结果。**主要耗时差来自 #7219 修正了旧版“少执行一次去噪”的问题，相同的 `num_inference_steps=…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9174" target="_blank">PR #9174</a> 行内评论<br><span class="muted">“fixed”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9069" target="_blank">条目 #9069</a> 会话评论<br><span class="muted">“&gt; 4\. Hi [@yenuo26](https://github.com/yenuo26), please assign this is…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9232" target="_blank">条目 #9232</a> 会话评论<br><span class="muted">“@BLANKETusers PTAL”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">amy-why-3459</span><span class="count">265</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9578" target="_blank">PR #9578</a> 会话评论 ×4<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9701" target="_blank">条目 #9701</a> 会话评论<br><span class="muted">“@natureofnature PTAL”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9705" target="_blank">条目 #9705</a> 行内评论 ×2<br><span class="muted">“[P2] Keep synchronous Smart Turn inference off the shared Silero worke…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9695" target="_blank">条目 #9695</a> 会话评论<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9696" target="_blank">条目 #9696</a> 会话评论<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9582" target="_blank">条目 #9582</a> 行内评论 ×6<br><span class="muted">“When `lengths[index] &gt; rung` (i.e. longer than the largest rung, since…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8445" target="_blank">条目 #8445</a> 行内评论 ×5<br><span class="muted">“Nit: both parametrized cases set `continuation_overlap_frames: 23`; th…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">条目 #9623</a> 行内评论 ×8<br><span class="muted">“These two tests come after the `if __name__ == &quot;__main__&quot;: pytest.main…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9585" target="_blank">条目 #9585</a> 行内评论 ×6<br><span class="muted">“The merge key expands the base runtime config at load time, so the CUD…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9557" target="_blank">条目 #9557</a> 行内评论 ×7<br><span class="muted">“The whole reference is prepended to the first emitted chunk, so `codec…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9613" target="_blank">条目 #9613</a> 行内评论 ×6<br><span class="muted">“Two things here: 1. **Shape of the returned payload.** `rest` is built…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8313" target="_blank">条目 #8313</a> 行内评论 ×3<br><span class="muted">“This check runs after the `estimator is None` → `TypeError` guard abov…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8316" target="_blank">条目 #8316</a> 行内评论 ×6<br><span class="muted">“`user_template` (and `state_template` in `_laya_prompt`) are rendered …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9625" target="_blank">条目 #9625</a> 行内评论 ×3<br><span class="muted">“This turns on placeholder scheduling for all native async-chunk receiv…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8320" target="_blank">条目 #8320</a> 行内评论 ×4<br><span class="muted">“Catching every exception at `debug` level means a broken deploy config…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8572" target="_blank">条目 #8572</a> 行内评论 ×6<br><span class="muted">“This assumes every value in `mm_kwargs` is a tensor indexed by item on…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8365" target="_blank">条目 #8365</a> 行内评论 ×3<br><span class="muted">“Now that the placeholder index decides whether a request is img2img, t…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8437" target="_blank">条目 #8437</a> 行内评论 ×3<br><span class="muted">“When `cudagraph_mm_encoder` is enabled on a non-CUDA platform, this re…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8533" target="_blank">条目 #8533</a> 行内评论 ×3<br><span class="muted">“With `enforce_eager: true` kept above, this block has no effect unless…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8545" target="_blank">条目 #8545</a> 行内评论 ×3<br><span class="muted">“Nit: this tuple is rebuilt for every parameter. A module-level constan…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8310" target="_blank">条目 #8310</a> 行内评论 ×3<br><span class="muted">“Minor: `_pending_stop_mask_source` and `_pending_stop_mask_event` are …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8746" target="_blank">条目 #8746</a> 行内评论 ×5<br><span class="muted">“This raises a client error from inside the denoise loop. In a request-…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8714" target="_blank">条目 #8714</a> 行内评论 ×5<br><span class="muted">“`scheduled` forces the serial path for any multi-request step batch, e…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8358" target="_blank">条目 #8358</a> 行内评论 ×2<br><span class="muted">“`torch.empty` leaves the buffer holding whatever was in memory, so cor…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8366" target="_blank">条目 #8366</a> 行内评论 ×2<br><span class="muted">“This verifies the arguments forwarded to a mocked `ctx.get_hf_processo…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9599" target="_blank">条目 #9599</a> 行内评论 ×3<br><span class="muted">“This makes a synchronous device-to-host copy of every emitted acoustic…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9635" target="_blank">PR #9635</a> 会话评论<br><span class="muted">“@yenuo26 PTAL”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9626" target="_blank">条目 #9626</a> 行内评论<br><span class="muted">“Nit / confirmation: `bool(multimodal_outputs)` now enables the sync po…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9600" target="_blank">条目 #9600</a> 行内评论<br><span class="muted">“`not is_npu()` turns the v2 incremental-VAE profile on for every other…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9298" target="_blank">条目 #9298</a> 会话评论<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9578" target="_blank">PR #9578</a> 提交正式评审（COMMENTED） ×4<br><span class="muted">“Review pass on `4c692487` focused on the core runtime changes (MRv2 pr…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank">PR #9560</a> 会话评论 ×2<br><span class="muted">“@hsliuustc0106 Recorded at head `74e4a2983443ee7115d59f11e5bf6557e771c…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9560" target="_blank">PR #9560</a> 行内评论<br><span class="muted">“Agreed that we do not need a dedicated test for each new dependency en…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">PR #9526</a> 会话评论 ×4<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">PR #9526</a> 提交正式评审（COMMENTED） ×3<br><span class="muted">“Thanks for the careful performance work and the accompanying CPU/CUDA …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9526" target="_blank">PR #9526</a> 行内评论 ×10<br><span class="muted">“Defensive gap vs `_update_states`: this predicate covers the common id…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9511" target="_blank">Issue #9511</a> 会话评论<br><span class="muted">“Hi @maithilijoshi20, thanks for offering to contribute! Happy for you …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">PR #9486</a> 会话评论 ×2<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">PR #9486</a> 提交正式评审（COMMENTED）<br><span class="muted">“Self-review on `e2815932` (human `@amy-why-3459` trigger). Two indepen…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9486" target="_blank">PR #9486</a> 行内评论 ×6<br><span class="muted">“Nice three-way discriminator. Worth keeping the `not committed_audio_c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">PR #9463</a> 会话评论 ×4<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">PR #9463</a> 提交正式评审（COMMENTED） ×6<br><span class="muted">“## Review Nice, tightly scoped load-time fold that closes the gap vs `…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9463" target="_blank">PR #9463</a> 行内评论 ×8<br><span class="muted">“Ordering matches `CosyVoice3Code2Wav.load_weights` (fold after load + …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9444" target="_blank">PR #9444</a> 会话评论<br><span class="muted">“@yenuo26 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9388" target="_blank">PR #9388</a> 会话评论<br><span class="muted">“@yenuo26 @natureofnature PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank">PR #9386</a> 会话评论 ×4<br><span class="muted">“Self-review: Checked the three accuracy levers against Transformers (k…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9386" target="_blank">PR #9386</a> 行内评论 ×2<br><span class="muted">“Fixed in 11140a1a8c. Added the recognition module to the generic singl…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9705" target="_blank">条目 #9705</a> 提交正式评审（CHANGES_REQUESTED）<br><span class="muted">“The PCM handoff and cross-session Silero batching are useful optimizat…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9701" target="_blank">条目 #9701</a> 提交正式评审（COMMENTED） ×4<br><span class="muted">“Reviewed the three commits on top of #9696 (`fb442216e3`, `ffc7771e66`…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9696" target="_blank">条目 #9696</a> 提交正式评审（COMMENTED） ×4<br><span class="muted">“Reviewed at `636aecc4`, focusing on `c2143a46` and `636aecc4` (the fir…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9695" target="_blank">条目 #9695</a> 提交正式评审（COMMENTED） ×4<br><span class="muted">“Reviewed at `a1877e70`. Using the row ledger instead of slicing the ac…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9626" target="_blank">条目 #9626</a> 会话评论<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9626" target="_blank">条目 #9626</a> 提交正式评审（COMMENTED）<br><span class="muted">“Source-reviewed `325b104dee154b6b1caf6223a53b962b88e816aa` (self-@). T…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9625" target="_blank">条目 #9625</a> 提交正式评审（COMMENTED） ×2<br><span class="muted">“Thanks for splitting the DAC stage out first, the deploy/test coverage…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9623" target="_blank">条目 #9623</a> 提交正式评审（COMMENTED） ×6<br><span class="muted">“Thanks for the PR. A few code-level notes inline: response-mode filter…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9613" target="_blank">条目 #9613</a> 提交正式评审（COMMENTED） ×9<br><span class="muted">“Thanks for wiring MRv2 into the XPU workers. The worker side looks cle…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9600" target="_blank">条目 #9600</a> 提交正式评审（COMMENTED）<br><span class="muted">“The fix for the ROCm shard makes sense, and the new parametrized test …”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9599" target="_blank">条目 #9599</a> 提交正式评审（COMMENTED） ×3<br><span class="muted">“Nice work keeping the feedback state request-local and handling preemp…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9585" target="_blank">条目 #9585</a> 提交正式评审（COMMENTED） ×6<br><span class="muted">“Thanks for consolidating the MRV2 profile into the default deploy and …”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9582" target="_blank">条目 #9582</a> 提交正式评审（COMMENTED） ×5<br><span class="muted">“Reviewed at `9c98e7e1`, focused on `vllm_omni/worker/bucketed_encoder.…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9580" target="_blank">条目 #9580</a> 会话评论<br><span class="muted">“@amy-why-3459 PTAL”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9557" target="_blank">条目 #9557</a> 提交正式评审（COMMENTED） ×2<br><span class="muted">“Thanks for tightening up the MOSS Local continuation path. The overall…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9534" target="_blank">条目 #9534</a> 会话评论<br><span class="muted">“@yezhi0312 Given the results (+18–19% audio throughput and ~15–16% low…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9518" target="_blank">条目 #9518</a> 会话评论<br><span class="muted">“@y-null @amy-why-3459 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9504" target="_blank">条目 #9504</a> 会话评论<br><span class="muted">“@yenuo26 @amy-why-3459 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9500" target="_blank">条目 #9500</a> 会话评论<br><span class="muted">“@yenuo26 @amy-why-3459 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9499" target="_blank">条目 #9499</a> 会话评论 ×2<br><span class="muted">“@amy-why-3459 @yenuo26 PTAL”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9417" target="_blank">条目 #9417</a> 会话评论<br><span class="muted">“Could you add real-model validation for the following two points? 1. *…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9402" target="_blank">条目 #9402</a> 会话评论<br><span class="muted">“https://github.com/vllm-project/vllm-omni/pull/9389”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9311" target="_blank">条目 #9311</a> 会话评论<br><span class="muted">“@amy-why-3459”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9308" target="_blank">PR #9308</a> 会话评论 ×3<br><span class="muted">“@yenuo26 @FayeSpica PTAL”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9298" target="_blank">条目 #9298</a> 提交正式评审（COMMENTED）<br><span class="muted">“Reviewed the seven-file CI/docs/test change at `9c8e8d2f407acc406db90b…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8445" target="_blank">条目 #8445</a> 提交正式评审（COMMENTED） ×6<br><span class="muted">“Thanks for the PR. I went through the validation move and the RPC erro…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8313" target="_blank">条目 #8313</a> 会话评论<br><span class="muted">“Correction to my review above: the Test Plan section isn&#39;t empty. It l…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8313" target="_blank">条目 #8313</a> 提交正式评审（COMMENTED） ×3<br><span class="muted">“Thanks for re-scoping this. The escape hatch closes a real gap: the ru…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8316" target="_blank">条目 #8316</a> 提交正式评审（COMMENTED） ×2<br><span class="muted">“Reviewed the core logic at 9b6ac9d0 (engine/duplex changes, the `respo…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8320" target="_blank">条目 #8320</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks for the careful parity numbers. The framing logic reads cleanly…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8572" target="_blank">条目 #8572</a> 提交正式评审（COMMENTED） ×7<br><span class="muted">“Read through the CoVo Stage 0 encoder CUDA graph changes at `3352cae`.…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8365" target="_blank">条目 #8365</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks for narrowing the sticky img2img layout to requests that actual…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8437" target="_blank">条目 #8437</a> 提交正式评审（COMMENTED） ×3<br><span class="muted">“Thanks for the thorough validation, especially the bitwise embedding c…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8533" target="_blank">条目 #8533</a> 提交正式评审（COMMENTED） ×2<br><span class="muted">“Thanks for the migration and the detailed numbers. Moving MiMo&#39;s input…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8545" target="_blank">条目 #8545</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks for tracking this down. The source-name check before delegating…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8310" target="_blank">条目 #8310</a> 提交正式评审（COMMENTED）<br><span class="muted">“Read through the async stop-mask path at 4961e4e. The lifecycle looks …”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8746" target="_blank">条目 #8746</a> 提交正式评审（COMMENTED） ×3<br><span class="muted">“Reviewed this PR&#39;s own 20 commits (`d746708e55...09523a08ac`, the sigm…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8714" target="_blank">条目 #8714</a> 提交正式评审（COMMENTED） ×4<br><span class="muted">“Reviewed the core paths at `a9e04a80` (schedule parsing/resolution, `A…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8358" target="_blank">条目 #8358</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks for the fix. Skipping the CPU QR on the inference path makes se…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/8366" target="_blank">条目 #8366</a> 提交正式评审（COMMENTED）<br><span class="muted">“Thanks, the root cause analysis is clear and the fix is small. `kwargs…”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">Bounty-hunter</span><span class="count">67</span></div>
+        <ul>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9634" target="_blank">条目 #9634</a> 行内评论<br><span class="muted">“**Must fix:** `load is None` is silently ignored here. After any succe…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9643" target="_blank">条目 #9643</a> 行内评论<br><span class="muted">“**Must fix:** This capability flag also opts MOSS-Image into cancellat…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9535" target="_blank">条目 #9535</a> 行内评论<br><span class="muted">“[must-fix] This relative link points to `vllm_omni/diffusion/model_loa…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6711" target="_blank">条目 #6711</a> 会话评论 ×2<br><span class="muted">“&gt; I took another pass at the architecture, and MixFusion appears to ha…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9529" target="_blank">条目 #9529</a> 行内评论<br><span class="muted">“**Must fix:** This new helper is not on the advertised Ref2VA path. `_…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9368" target="_blank">条目 #9368</a> 行内评论 ×3<br><span class="muted">“[P2] Validate the batch before starting its decode jobs _prepare_item …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">条目 #9482</a> 会话评论 ×2<br><span class="muted">“### Review **Validation required before acceptance** - `tests/diffusio…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9351" target="_blank">条目 #9351</a> 行内评论<br><span class="muted">“[P2] Detach the collective gate when removing the DLO hook This assign…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8093" target="_blank">条目 #8093</a> 会话评论<br><span class="muted">“**[P2] Reconcile the text-encoder flag with module offload selection**…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9326" target="_blank">条目 #9326</a> 会话评论<br><span class="muted">“[P2] Handle fatal tile-group errors before component teardown At `845c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5105" target="_blank">条目 #5105</a> 会话评论<br><span class="muted">“Reviewed head `3cf7f5a48a01ca6d70b2b99dc70a58d8b0ef3567`. ### [P1] Do …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9379" target="_blank">条目 #9379</a> 行内评论<br><span class="muted">“[P2] Preserve the caller&#39;s bias suppression when using the saved Marli…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8397" target="_blank">条目 #8397</a> 会话评论<br><span class="muted">“&lt;!-- infermatrix-direct-review: vllm-project/vllm-omni#8397@107f2543a3…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9306" target="_blank">条目 #9306</a> 会话评论<br><span class="muted">“&lt;!-- independent-review: pr9306:L01:67e359d16dd3978482164c8c9f9d0ffa14…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8563" target="_blank">条目 #8563</a> 会话评论<br><span class="muted">“&lt;!-- infermatrix-review: vllm-project/vllm-omni#8563 head=c3b7e183a0c1…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8523" target="_blank">条目 #8523</a> 行内评论<br><span class="muted">“[P2] Include the new tests in the diffusion CPU CI selector All ten te…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8525" target="_blank">条目 #8525</a> 会话评论<br><span class="muted">“&lt;!-- codex-review:8525:edbc97899a1097efaae6aad498972ae2c437ee21 --&gt; Re…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8524" target="_blank">条目 #8524</a> 会话评论<br><span class="muted">“&lt;!-- codex-review:vllm-project/vllm-omni#8524:977d6c6484c8136f7d765dbf…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8271" target="_blank">条目 #8271</a> 会话评论<br><span class="muted">“Please update the inventory snapshot test alongside the two new enviro…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6544" target="_blank">条目 #6544</a> 行内评论<br><span class="muted">“**[P2] Propagate activation failures for the implicit static adapter**…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9349" target="_blank">条目 #9349</a> 会话评论<br><span class="muted">“I reran `test_image_to_image_alignment_online` on the failing commit `…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6430" target="_blank">条目 #6430</a> 会话评论<br><span class="muted">“&lt;!-- codex-review:pr6430:1b6b686aaccf226e1768fefd1fe7e4ddb01cbb4e --&gt; …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9245" target="_blank">条目 #9245</a> 会话评论<br><span class="muted">“&lt;!-- independent-review:pr9245:D01:head:d3ddca2670144f4a36c3f8c0b2379a…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/3638" target="_blank">条目 #3638</a> 会话评论<br><span class="muted">“Reviewed head: `dd007807efc9c5fb33bd33161076f6d94a1f33fb`. **[P1] Pres…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7560" target="_blank">条目 #7560</a> 行内评论<br><span class="muted">“**[P2] Pass the actual attention head dimension to the packing gate** …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7388" target="_blank">条目 #7388</a> 行内评论<br><span class="muted">“[P1] Preserve the post-Ulysses key-mask layout when sharding text With…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7064" target="_blank">条目 #7064</a> 行内评论<br><span class="muted">“Reviewed head `9a5b83e1ac78b0c15155eb1dd8e5418e5a6947cb`. **[P1] Prese…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7473" target="_blank">条目 #7473</a> 会话评论<br><span class="muted">“Reviewed head `b9936b422499e8e6d9b839d6f5d171ac13a9decc`. Two addition…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7357" target="_blank">条目 #7357</a> 会话评论<br><span class="muted">“The new diffusion options are accepted but never reach their runtime c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7310" target="_blank">条目 #7310</a> 会话评论<br><span class="muted">“Image-edit benchmarks still regress after the dataset-routing fix in […”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8584" target="_blank">条目 #8584</a> 会话评论<br><span class="muted">“### Must fix - `vllm_omni/diffusion/models/flux/pipeline_flux.py:L542`…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7160" target="_blank">条目 #7160</a> 会话评论<br><span class="muted">“Reviewed head `5001d6e86ec2fc51e0b25c7c2d66c30c6e255870`. **[P2] Accou…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/4156" target="_blank">条目 #4156</a> 会话评论 ×2<br><span class="muted">“Reviewed at `d88aa93915432235cd46bca9ebb5459e8ace1a07`. I found three …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6477" target="_blank">条目 #6477</a> 行内评论<br><span class="muted">“Follow-up on this cancellation finding at head `05916a1fe58f31866c4c29…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6919" target="_blank">条目 #6919</a> 会话评论<br><span class="muted">“&lt;!-- independent-review:pr6919:8fbfc2eb0a062c5bc0533a5184dd4e9e4c44928…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6655" target="_blank">条目 #6655</a> 会话评论<br><span class="muted">“Review at `307510bf8e08c2011b07f44093bf1712d5497176`: 1. **[P2] Preser…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6485" target="_blank">条目 #6485</a> 会话评论<br><span class="muted">“### [P2] Preserve deferred reference audio when the prompt also contai…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/7381" target="_blank">条目 #7381</a> 会话评论<br><span class="muted">“Must fix before this multi-GPU Cache-DiT scope is considered validated…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6917" target="_blank">条目 #6917</a> 会话评论<br><span class="muted">“&lt;!-- omni-independent-review:6917:bad0920a8c7f4b009a4d554dced40930af03…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8893" target="_blank">条目 #8893</a> 会话评论<br><span class="muted">“[P2] Forward the temporal chunk override through the normal SP decode …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5848" target="_blank">条目 #5848</a> 行内评论<br><span class="muted">“Rechecked at `b69fcee8aa0a5be70d27bec99e6bc68e96884f09`: the nightly c…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6098" target="_blank">条目 #6098</a> 会话评论<br><span class="muted">“Reviewed at `5d17a5a15b109c5ef98ceae90df60ce64090bccb`. Two correctnes…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5518" target="_blank">条目 #5518</a> 会话评论<br><span class="muted">“### [P2] Keep the unrelated inventory snapshot counts at their actual …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5058" target="_blank">条目 #5058</a> 会话评论<br><span class="muted">“[P2] Wire `--seed` through to DreamZero&#39;s noise generation At [robot_p…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/5315" target="_blank">条目 #5315</a> 会话评论<br><span class="muted">“Reviewed at `e1f036c3e914599e5e5531089ad306797ae58454`. Two must-fix i…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/4515" target="_blank">条目 #4515</a> 会话评论<br><span class="muted">“Reviewed head `164152012a8629733a8528d81ad9beb271458946`. Two addition…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9182" target="_blank">条目 #9182</a> 会话评论<br><span class="muted">“Reviewed head `18a79dfe91ac8dc551d340d86ed3e2e240326995`. **[P2] Resto…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9142" target="_blank">条目 #9142</a> 会话评论<br><span class="muted">“&lt;!-- pr9142-review:67ed53272d7d050c65e9380926153eb302927fe1:MF-01 --&gt; …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8878" target="_blank">条目 #8878</a> 会话评论<br><span class="muted">“&lt;!-- codex-review:pr8878:b9a27942f3a6544b6e23645a986f6e8097cf82a3 --&gt; …”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/6711" target="_blank">条目 #6711</a> 行内评论<br><span class="muted">“**[P1] Do not silently drop `attention_kwargs` in the packed path** `_…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8757" target="_blank">条目 #8757</a> 会话评论<br><span class="muted">“&lt;!-- codex-review:8757:MW-001:cdd1c833fe7201524214089690ef3f735c6ed3eb…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8274" target="_blank">条目 #8274</a> 行内评论<br><span class="muted">“[P2] Keep the image budget valid before admitting 128 references The n…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9006" target="_blank">条目 #9006</a> 会话评论<br><span class="muted">“GPU validation passed ✅ Validated commit: `4b210e4d311fbecf3eb66f90cf8…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9535" target="_blank">条目 #9535</a> 提交正式评审（COMMENTED）<br><span class="muted">“Found one Must Fix on the frozen head `84d418c3709c1f0e46a52e5f1b44a67…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9482" target="_blank">条目 #9482</a> 提交正式评审（APPROVED）<br><span class="muted">“LGTM”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9368" target="_blank">条目 #9368</a> 提交正式评审（COMMENTED） ×2<br><span class="muted">“Static review of frozen head `69a3cebccddbcd7a634f43e7929630933f03126f…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9351" target="_blank">条目 #9351</a> 提交正式评审（COMMENTED）<br><span class="muted">“Reviewed frozen head `3e9396a9cea9cc1f39db9938f70f03ace1fcf9c3`. One n…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9245" target="_blank">条目 #9245</a> 提交正式评审（APPROVED）<br><span class="muted">“LGTM”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/9006" target="_blank">条目 #9006</a> 提交正式评审（APPROVED）<br><span class="muted">“LGTM, no blocking issues”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/7560" target="_blank">条目 #7560</a> 提交正式评审（COMMENTED）<br><span class="muted">“One correctness issue in the automatic fallback gate; see the inline c…”</span></li>
+          <li><span class="k k3">评审</span> 对 <a href="https://github.com/vllm-project/vllm-omni/pull/6711" target="_blank">条目 #6711</a> 提交正式评审（CHANGES_REQUESTED）<br><span class="muted">“I took another pass at the architecture, and MixFusion appears to have…”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">y-null</span><span class="count">6</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9621" target="_blank">PR #9621</a> 会话评论<br><span class="muted">“Thanks all - status against head b1acd8806 (several findings above wer…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9207" target="_blank">条目 #9207</a> 会话评论 ×2<br><span class="muted">“Checked tip `de049d42d` (force-push that restores the warmup-hook desi…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9508" target="_blank">条目 #9508</a> 会话评论 ×2<br><span class="muted">“@seongyun1104, thank you for your interest in contributing speculative…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9518" target="_blank">条目 #9518</a> 会话评论<br><span class="muted">“Reviewed `bf192990` against the pinned vLLM implementation. I did not …”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">Dong1017</span><span class="count">39</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9536" target="_blank">条目 #9536</a> 会话评论<br><span class="muted">“Thanks for the detailed design. The Loader/HWM/Offloader split and the…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9154" target="_blank">条目 #9154</a> 行内评论 ×3<br><span class="muted">“Addressed in b38d3ed14 (included in the current head b0dd70038): the t…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9674" target="_blank">条目 #9674</a> 会话评论<br><span class="muted">“Thanks for adding the link”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9421" target="_blank">PR #9421</a> 会话评论<br><span class="muted">“Self-review of `35bf5e3dd` (single file, `tests/diffusion/distributed/…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9381" target="_blank">PR #9381</a> 会话评论<br><span class="muted">“@Gaohan123 — small docs follow-up for the release line: #9332 landed t…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9378" target="_blank">PR #9378</a> 会话评论<br><span class="muted">“closed as 7618 not being activate”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9525" target="_blank">条目 #9525</a> 会话评论<br><span class="muted">“Three additions to the proposed A/C acceptance contract, checked again…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9331" target="_blank">PR #9331</a> 会话评论 ×2<br><span class="muted">“Status note: the `release/v0.32.0` counterpart of this PR, #9332, was …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9305" target="_blank">条目 #9305</a> 会话评论 ×2<br><span class="muted">“Thanks for the detailed report — the per-size token table and bridge l…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9273" target="_blank">条目 #9273</a> 会话评论 ×5<br><span class="muted">“Both findings fixed on tip `fe2147b26` ([Bugfix] `6515cf37c` + [Test] …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9191" target="_blank">条目 #9191</a> 会话评论 ×2<br><span class="muted">“Thanks for the report, and the workaround detail is a useful clue: `0.…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9154" target="_blank">条目 #9154</a> 会话评论 ×2<br><span class="muted">“@ShengDev @Bounty-hunter @amy-why-3459 Can you review again, when you …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank">PR #9030</a> 会话评论<br><span class="muted">“@yenuo26 @amy-why-3459 @zengchuang-hw @fan2956 - on the convergence re…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9030" target="_blank">PR #9030</a> 行内评论 ×7<br><span class="muted">“Superseded by the in-job root-to-FL2VA normalization (c3cb2fe0): when …”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8919" target="_blank">条目 #8919</a> 会话评论<br><span class="muted">“Thanks @amy-why-3459 — the four correctness items and the test gaps ar…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/8841" target="_blank">条目 #8841</a> 会话评论<br><span class="muted">“Happy to pick this up. Plan: (1) measure the bf16 ULP distance between…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8738" target="_blank">条目 #8738</a> 会话评论 ×3<br><span class="muted">“@tzhouam @Bounty-hunter gentle re-ping (last one was 12 days ago). Sta…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/8314" target="_blank">条目 #8314</a> 会话评论<br><span class="muted">“@amy-why-3459 can you take a look when you have a chance?”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/8135" target="_blank">条目 #8135</a> 会话评论 ×3<br><span class="muted">“We can run a homogeneous 2x H200 (SM90) discrimination matrix on curre…”</span></li>
+        </ul>
+      </div>
+      <div class="cmt-card">
+        <div class="head"><span class="who">wangqiankun13</span><span class="count">5</span></div>
+        <ul>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/issues/9590" target="_blank">条目 #9590</a> 会话评论 ×2<br><span class="muted">“Hello, the image distortion issue may be the same as [Issue-8850](http…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9647" target="_blank">PR #9647</a> 会话评论<br><span class="muted">“&gt; @wangqiankun13, please protect the [new compile-time accessor](https…”</span></li>
+          <li><span class="k k2">行内</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9462" target="_blank">PR #9462</a> 行内评论<br><span class="muted">“It has been changed to use an RPC-form barrier to wait for task comple…”</span></li>
+          <li><span class="k k1">会话</span> <a href="https://github.com/vllm-project/vllm-omni/pull/9462" target="_blank">PR #9462</a> 会话评论<br><span class="muted">“&gt; * [ ] **P2 — Synchronize the worker devices after warmup.** @wangqia…”</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>统计方法</h2>
+    <ul class="method">
+      <li>统计窗口为滚动 168 小时（周报：过去 7×24 小时）：2026-10-26 08:01 至 2026-11-02 08:01，北京时间。</li>
+      <li>数据来源：GitHub Search API（author / created / merged / commenter 多条件）+ REST 明细接口（代码量、状态、时长）+ Events 流水三路交叉验证，评论按 URL 去重。</li>
+      <li>「代码量」为 PR 的 additions / deletions 行数；总览表「代码量」列为该成员窗口内所有 PR 之和。</li>
+      <li>「Open 时长」= 扫描时间 − PR 创建时间（仍在 open 状态）；窗口内已合并/关闭的为创建至合并/关闭的时长。</li>
+      <li>评论口径：Issue / PR 会话评论、PR 行内代码评论（review comment）、带正文的正式评审（review）；纯 approve 不计。</li>
+      <li>评分规格：合入 PR（新增+删除 ≥500 行）5 分/个；合入 PR（&lt;500 行）3 分/个；新增 PR 2 分/个；Issue 1 分/个；Comment 1 分/条。成员总览按个人总得分从高到低排序（同分按名单顺序）。</li>
+    </ul>
+  </section>
+
+  <footer>InferMatrix深圳开发组 · vllm-project/vllm-omni 贡献周报 · 生成于 2026-11-02 08:01 · 原始数据：report.json</footer>
+</div>
+</body>
+</html>
